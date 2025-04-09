@@ -18,7 +18,7 @@ class ProductCatalogView(APIView):
                    ).filter(quantity__gt=0))
         )
                 
-        # Apply filters if provided
+        
         if category:
             queryset = queryset.filter(category__iexact=category)
             

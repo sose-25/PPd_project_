@@ -12,7 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
 class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seller
-        exclude = ('User',)
+        fields = '__all__'
+        # exclude = ('User',)
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:

@@ -77,6 +77,7 @@ def create_role_instance(sender, instance, created, **kwargs):
 
 
 class Product(models.Model):
+    
     product_name = models.CharField(max_length=100)
     product_size = models.DecimalField(max_digits=10, decimal_places=2)
     product_description = models.TextField(blank=True, null=True)
