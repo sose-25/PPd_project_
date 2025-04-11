@@ -144,7 +144,7 @@ def add_order(request):
         return Response({'error': 'No items in cart.'}, status=status.HTTP_400_BAD_REQUEST)
 
     with transaction.atomic():
-        order = Orders.objects.create(client=client, status='confirmed')
+        order = Orders.objects.create(client=client, status='pending')
 
         for item in cart_items:
             if item.quantity > item.order_products.quantity:
@@ -170,3 +170,52 @@ def add_order(request):
         "client_name": client.user.get_full_name() or client.user.username,
         "status": order.status,
     }, status=status.HTTP_201_CREATED)
+
+@api_view(['DELETE'])
+def remove_order(request,order_id):
+    user = request.user
+    if not user.is_authenticated or not hasattr(user, 'client'):
+        return Response({'error': 'You must log in to remove an order'}, status=status.HTTP_403_FORBIDDEN)
+
+    order = get_object_or_404(Orders, id=order_id, client=user.client)
+
+    if order.status != 'pending':
+        return Response({'error': 'Only pending orders can be deleted'}, status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        for item in order.orders_details.all():
+            item.order_products.quantity += item.quantity
+            item.order_products.save()
+
+        order.orders_details.all().delete()
+        order.delete()
+
+    return Response({"message": "Order deleted successfully"}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def show_orders(request):
+    user = request.user
+    if not user.is_authenticated or not hasattr(user, 'client'):
+        return Response({'error': 'You must log in to see your orders'}, status=status.HTTP_403_FORBIDDEN)
+
+    orders = Orders.objects.filter(client=user.client).order_by('order_date')
+
+    order_list = []
+    for order in orders:
+        order_list.append({
+            "order_id": order.id,
+            "status": order.status,
+            "order_date": order.order_date,
+            "total_price": order.total_price(),
+            "items": [
+                {
+                    "product": detail.order_products.product.product_name,
+                    "quantity": detail.quantity,
+                    "price": detail.order_products.price
+                }
+                for detail in order.orders_details.all()
+            ]
+        })
+
+    return Response({"orders": order_list}, status=status.HTTP_200_OK)
