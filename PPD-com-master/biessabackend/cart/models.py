@@ -60,4 +60,3 @@ class Paymentord(models.Model):
 
     def __str__(self):
         return f"Payment {self.payment_method} - {self.order.client.username} - Total: {self.amount}"
-
