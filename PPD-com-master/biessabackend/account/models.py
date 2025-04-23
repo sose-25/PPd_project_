@@ -32,20 +32,6 @@ class User(AbstractUser):
         verbose_name = "User"
         verbose_name_plural = "Users"
 
-class Report(models.Model):
-    status_choices = [
-        ('pending','Pending'),
-        ('approved','Approved'),
-        ('rejected','Rejected')
-    ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    report_date = models.DateTimeField(auto_now_add=True)
-    report_type = models.CharField(max_length=100)
-    reason = models.CharField(max_length=100)
-    report_status = models.CharField(max_length=10, choices=status_choices)
-
-    def __str__(self):
-        return f"{self.user.username} ({self.report_type})"
 
 class Client(models.Model):
      user = models.OneToOneField(User, on_delete=models.CASCADE , null=True , default=None)
@@ -120,6 +106,7 @@ class Order(models.Model):
     ]
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    pro_seller = models.ManyToManyField(Product_seller)
     order_details = models.ManyToManyField(Orderdetails)
     order_date = models.DateTimeField(auto_now_add=True)
 
