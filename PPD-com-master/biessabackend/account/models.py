@@ -94,6 +94,7 @@ class Product_seller(models.Model):
 class Orderdetails(models.Model):
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     order_products = models.ForeignKey(Product_seller, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return f"{self.quantity} of {self.order_products.product.product_name}"
@@ -109,12 +110,10 @@ class Order(models.Model):
     pro_seller = models.ManyToManyField(Product_seller)
     order_details = models.ManyToManyField(Orderdetails)
     order_date = models.DateTimeField(auto_now_add=True)
-
-    def total_price(self):
-        return sum(detail.quantity * detail.order_products.price for detail in self.order_details.all())
+    total_price =models.DecimalField(max_digits=10, decimal_places=2,default=0)
 
     def __str__(self):
-        return f"Order {self.id} - {self.client.user.username} - Total: {self.total_price()}"
+        return f"Order {self.id} - {self.client.user.username} "
 
 class Payment(models.Model):
     PAYMENT_STATUS_CHOICES = [

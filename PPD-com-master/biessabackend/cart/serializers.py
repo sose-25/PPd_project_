@@ -42,13 +42,14 @@ class CreateOrderSerializer(serializers.ModelSerializer):
         try:
             client = Client.objects.get(user=user)
         except Client.DoesNotExist:
-            raise serializers.ValidationError("User is not registered as a client.")
+            raise serializers.ValidationError("User is not registered as a client")
 
         items = validated_data.pop('items')
 
         with transaction.atomic():
             order = Order.objects.create(client=client, status='pending')
 
+            total = 0
             for item in items:
                 product_seller = Product_seller.objects.select_for_update().get(
                     id=item['product_seller_id']
@@ -60,12 +61,17 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 
                 order_detail = Orderdetails.objects.create(
                     order_products=product_seller,
-                    quantity=quantity
+                    quantity=quantity,
+                    price=product_seller.price
                 )
 
                 order.order_details.add(order_detail)
 
                 order.pro_seller.add(product_seller)
+
+                total += quantity * product_seller.price
+                order.total_price = total
+                order.save()
 
         return order
 
@@ -85,6 +91,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             for detail in order_details
         ]
 
-        representation['total_price'] = float(instance.total_price())
+        representation['total_price'] = float(instance.total_price)
+
 
         return representation
