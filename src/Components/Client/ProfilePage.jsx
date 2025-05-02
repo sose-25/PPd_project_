@@ -1,67 +1,93 @@
-import React, { useState } from 'react';
-import { Box, Typography, Container, Avatar, Grid, Paper, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import { Box, CssBaseline, Tabs, Tab, Grid, Paper, Avatar , Typography, Divider, Container, Link} from '@mui/material';
+import { useState } from 'react';
 import Header from './Header';
-import ChangeProfileInfo from './ChangeProfileInfo';
+import ProfileInfoPage from './ProfileInfoPage';
+import OrderHistory from './OrderHistory';
+import WishList from './WishList';
+import Basket from './Basket';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import TelegramIcon from '@mui/icons-material/Telegram';
 
 const ProfilePage = () => {
-  const [isChangeInfoVisible, setIsChangeInfoVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState(0); // State to track the active tab
+  const [isBasketVisible, setIsBasketVisible] = useState(false);
 
-  const handleChangeInfoVisible = () => {
-    setIsChangeInfoVisible(!isChangeInfoVisible);
+  const handleBasketVisible = () => {
+    setIsBasketVisible(!isBasketVisible);
   };
 
   const handleOverlayClick = () => {
-    setIsChangeInfoVisible(false);
+    setIsBasketVisible(false);
   };
 
-  const handleBoxClick = (e) => {
-    e.stopPropagation();
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 0:
+        return <ProfileInfoPage />;
+      case 1:
+        return <OrderHistory />;
+      case 2:
+        return <WishList />;
+      default:
+        return <ProfileInfoPage />;
+    }
   };
 
   return (
     <div>
-      <Header />
-      <Box sx={{ display: 'flex' }}>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Container maxWidth="md">
-            <Paper sx={{ p: 3, mb: 3 }}>
-              <Grid container spacing={2}>
-                <Grid item>
-                  <Avatar sx={{ width: 100, height: 100 }} src="/path/to/profile-image.jpg" alt="User Name" />
-                </Grid>
-                <Grid item xs>
-                  <Typography variant="h4">User Name</Typography>
-                  <Typography variant="body1">user@example.com</Typography>
-                </Grid>
-              </Grid>
-            </Paper>
-            <Paper sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="h6" gutterBottom>
-                  Profile Information
-                </Typography>
-                <IconButton onClick={handleChangeInfoVisible}>
-                  <EditIcon />
-                </IconButton>
-              </Box>
-              <Typography variant="body1">
-                <strong>Full Name:</strong> User Name
-              </Typography>
-              <Typography variant="body1">
-                <strong>Email:</strong> user@example.com
-              </Typography>
-              <Typography variant="body1">
-                <strong>Phone:</strong> (123) 456-7890
-              </Typography>
-              <Typography variant="body1">
-                <strong>Address:</strong> 123 Main St, Anytown, USA
-              </Typography>
-            </Paper>
-          </Container>
-        </Box>
+      <CssBaseline />
+      <Header HandleClickBasketIcon={handleBasketVisible} />
+      <Box sx={{ width: '100%', bgcolor: 'background.paper', mt: 3 }}>
+        {/* Tabs for navigation */}
+        
+        <Container>
+            <Box sx={{display:"flex"}}>
+            <Avatar sx={{width:200,height:200}}  />
+            <Box mt={10} ml={3} >
+            <Typography>
+            <Box
+              sx={{
+                display: "flex",
+                width: "70vw",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <h3 style={{ margin: 0 }}>Client Name</h3>
+            </Box>
+            <Box sx={{pt:1,pl:2 }}>
+               <FacebookIcon/>
+               <WhatsAppIcon/>
+               <TelegramIcon/>
+               </Box>
+          </Typography>
+            </Box>
+            </Box>       
+        </Container>
+                            <Box sx={{ width: "100%", bgcolor: "background.paper", mt: 3 }}> 
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          sx={{
+            justifyContent: 'flex-start',
+            display: 'flex',
+          }}
+        >
+          <Tab label="User Information" />
+          <Tab label="Order History" />
+          <Tab label="Wishlist" />
+          
+        </Tabs>
+        <Divider variant='inset'/>
       </Box>
-      {isChangeInfoVisible && (
+      </Box>
+      <Box sx={{ p: 3 }}>{renderContent()}</Box>
+      {isBasketVisible && (
         <>
           <Box
             sx={{
@@ -87,13 +113,11 @@ const ProfilePage = () => {
               boxShadow: 3,
               borderRadius: 1,
             }}
-            onClick={handleBoxClick}
           >
-            <ChangeProfileInfo />
+            <Basket />
           </Box>
         </>
       )}
-      
     </div>
   );
 };

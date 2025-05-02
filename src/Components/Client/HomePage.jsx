@@ -1,8 +1,14 @@
-import { Container, Box } from "@mui/material";
+import { Container, Box, CssBaseline } from "@mui/material";
 import Header from "./Header";
-import CategoriesCards from "./CategoriesCards";
 import Basket from "./Basket";
 import { useState } from "react";
+import React from 'react';
+import Navbar from './../InesComp/Navbar'; 
+import Hero from './../InesComp/Hero';
+import CategoriesList from './../InesComp/CategoriesList';
+import CommentersList from './../InesComp/CommentersList copy';
+import FAQSection from './../InesComp/FAQSection';
+import Footer  from './../InesComp/Footer';
 
 export default function HomePage() {
   const [isBasketVisible, setIsBasketVisible] = useState(false);
@@ -17,10 +23,28 @@ export default function HomePage() {
 
   return (
     <>
+    <CssBaseline />
       <Header HandleClickBasketIcon={handleBasketVisible} />
-      <Container maxWidth={false} sx={{ padding: 0 }}>
-        <CategoriesCards />
-      </Container>
+      <div>
+
+<div className="full-width">
+  
+  <Hero />
+</div>
+
+<div style={{ display: 'flex', justifyContent: 'center' }}>
+<h4 style={{ fontSize: '2rem', color: '#023E8A', margin: 20 }}>Categories:</h4>
+</div>
+
+<CategoriesList />
+
+
+<div className="full-width">
+  <FAQSection />
+  <Footer />
+</div>
+
+</div>
       {isBasketVisible && (
         <>
           <Box

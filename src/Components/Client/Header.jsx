@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search'; 
 import PersonIcon from '@mui/icons-material/Person';
@@ -6,6 +6,9 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import Badge, { badgeClasses } from '@mui/material/Badge';
+import { useNavigate } from 'react-router-dom';
+import { searchProducts } from '../../../APIs/SearchService';
+
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
@@ -14,7 +17,24 @@ const CartBadge = styled(Badge)`
 `;
 
 const Header = ({HandleClickBasketIcon}) => {
+  const [query, setQuery] = useState(''); 
+  const navigate = useNavigate();
+  const handleInputChange = (e) => {
+    setQuery(e.target.value);
+  };
 
+  const handleKeyPress = async (e) => {
+    if (e.key === 'Enter') {
+      try {
+        const results = await searchProducts(query);
+        console.log('Search Results:', results);
+
+        navigate(`/Products?q=${query}`);
+      } catch (error) {
+        console.error('Error during search:', error);
+      }
+    }
+  };
   return (
     <AppBar sx={{backgroundColor:"#023E8A"}} position="static">
       <Toolbar>
@@ -38,22 +58,21 @@ const Header = ({HandleClickBasketIcon}) => {
 
         {/* Spacer to push the search bar and right-side links */}
         <Box sx={{ flexGrow: 1 }} />
-
-        {/* Search bar in the middle */}
         <TextField
-          variant="outlined"
-          size="small"
-          placeholder="Search…"
-          sx={{ width: '300px',backgroundColor:"white",borderRadius:"3px", marginRight: 2 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment  position="start">
-                <SearchIcon  />
-              </InputAdornment>
-            ),
-          }}
-        />
-
+                    variant="outlined"
+                    size="small"
+                    placeholder="Search…"
+                    onKeyPress={handleKeyPress}
+                    onChange={handleInputChange}
+                    sx={{ width: '300px',backgroundColor:"white",borderRadius:"3px", marginRight: 2 }}
+                    InputProp={{
+                      startAdornment: (
+                        <InputAdornment  position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
         {/* Navigation links on the right */}
         <Box sx={{ display: 'flex', gap: 2 }}>
         <IconButton onClick={HandleClickBasketIcon}>
@@ -65,7 +84,9 @@ const Header = ({HandleClickBasketIcon}) => {
           </IconButton>
         </Box>
       </Toolbar>
+      
     </AppBar>
+    
   );
 };
 

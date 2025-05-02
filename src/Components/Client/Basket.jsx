@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -15,88 +15,204 @@ import {
   Avatar,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { createOrder } from '../../../APIs/cartservice';
 
-const initialItems = [
-  { id: 1, name: 'Product 1', price: 20, quantity: 2,image:"" },
-  { id: 2, name: 'Product 2', price: 15, quantity: 1,image:"" },
-  { id: 3, name: 'Product 3', price: 30, quantity: 3,image:"" },
-];
 
 export default function Basket() {
-  const [items, setItems] = useState(initialItems);
-
-  // Calculate total price
-  const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
-
-  // Remove an item from the basket
-  const handleRemoveItem = (id) => {
-    setItems(items.filter((item) => item.id !== id));
+  const [items, setItems] = useState([]);
+  const getToken = () => {
+    return localStorage.getItem("access") || localStorage.getItem("token") || "";
   };
 
-  // Update item quantity
-  const handleQuantityChange = (id, newQuantity) => {
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item
-      )
-    );
+  const token = getToken(); 
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    const parsedItems = cartItems.map(item => ({
+      ...item,
+      price: parseFloat(item.price), // Ensure price is a number
+    }));
+    setItems(parsedItems);
+  }, []);
+
+  const handleCheckOut = async () => {
+    if (items.length === 0) {
+      alert("Your cart is empty. Please add items to the cart before checking out.");
+      return;
+    }
+  
+    const clientId = parseInt(localStorage.getItem("user_id"), 10); 
+    if (!clientId) {
+      alert("User not logged in. Please log in to proceed with checkout.");
+      return;
+    }
+  
+    const orderData = {
+      items: items.map(item => ({
+        product_seller_id: item.proseller_id,
+        quantity: item.quantity,
+      })),
+    };
+    try {
+      console.log("Payload being sent:", JSON.stringify(orderData, null, 2));
+      console.log("Order Data:", orderData);
+      const response = await createOrder(orderData,token); 
+      console.log("Order created:", response);
+      alert("Order placed successfully!");
+      localStorage.removeItem("cart");
+      setItems([]);
+    } catch (error) {
+      console.error("Error creating order:", error);
+      alert("Failed to place the order. Please try again.");
+    }
+  };
+
+  const totalPrice = items.reduce((total, item) => {
+    const itemPrice = parseFloat(item.price) || 0; 
+    return total + itemPrice * item.quantity;
+  }, 0);
+
+  const handleRemoveItem = (index) => {
+    const updatedItems = [...items];
+    updatedItems.splice(index, 1);
+    setItems(updatedItems);
+    localStorage.setItem("cart", JSON.stringify(updatedItems));
+  };
+
+  const handleQuantityChange = (index, newQuantity) => {
+    const updatedItems = [...items];
+    updatedItems[index].quantity = Math.max(1, newQuantity);
+    setItems(updatedItems);
+    localStorage.setItem("cart", JSON.stringify(updatedItems));
   };
 
   return (
-    <Card sx={{ maxWidth: 800,minWidth:450, margin: 'auto', mt: 4 ,
-      position: "fixed",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      zIndex: 1000,
-      backgroundColor: "white",
-      padding: 2,
-      boxShadow: 3,
-      borderRadius: 1,
-    }}>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Shopping Basket
-        </Typography>
-        <List>
-          {items.map((item) => (
-            <ListItem key={item.id}>
-              <ListItemAvatar><Avatar src={item.image} alt={item.name} /></ListItemAvatar>
-              <ListItemText
-                primary={item.name}
-                secondary={`$${item.price.toFixed(2)} each`}
-              />
-              <TextField
-                type="number"
-                value={item.quantity}
-                onChange={(e) =>
-                  handleQuantityChange(item.id, parseInt(e.target.value, 10))
-                }
-                inputProps={{ min: 1 }}
-                sx={{ width: '80px', mr: 2 }}
-              />
-              <ListItemSecondaryAction>
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleRemoveItem(item.id)}
+    <Box
+      id="cart"
+      sx={{
+        width: "866px",
+        height: "auto", // Adjust height to fit content dynamically
+        background: "#ffffff",
+        borderRadius: "10px",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        padding: "30px",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        alignItems: "center",
+        margin: "0 auto",
+      }}
+    >
+      <table
+        className="cart-table"
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          marginBottom: "20px", // Add spacing below the table
+        }}
+      >
+        <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item, index) => (
+            <tr key={index}>
+              <td>
+                <img
+                  src={item.image_url}
+                  alt={item.product_name}
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                  }}
+                />
+              </td>
+              <td>{item.product_name}</td>
+              <td>{item.price.toFixed(2)} DA</td>
+              <td>
+                <TextField
+                  type="number"
+                  value={item.quantity}
+                  onChange={(e) =>
+                    handleQuantityChange(index, parseInt(e.target.value, 10))
+                  }
+                  inputProps={{ min: 1 }}
+                  sx={{
+                    width: "80px", // Increase width for better visibility
+                    padding: "5px",
+                    border: "1px solid #ccc",
+                    borderRadius: "10px",
+                    backgroundColor: "#F8F9FA",
+                    color: "#2C2C2C",
+                    fontSize: "14px",
+                    textAlign: "center", // Center-align text
+                  }}
+                />
+              </td>
+              <td>
+                <Button
+                  onClick={() => handleRemoveItem(index)}
+                  sx={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "20px",
+                    color: "#DC3545",
+                    cursor: "pointer",
+                  }}
                 >
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
+                  🗑️
+                </Button>
+              </td>
+            </tr>
           ))}
-        </List>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Typography variant="h6">Total:</Typography>
-          <Typography variant="h6">${totalPrice.toFixed(2)}</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button variant="contained" color="primary">
-            Checkout
-          </Button>
-        </Box>
-      </CardContent>
-    </Card>
+        </tbody>
+      </table>
+  
+      <Box
+        className="cart-footer"
+        sx={{
+          display: "flex",
+          justifyContent: "space-between", // Space between total price and button
+          alignItems: "center",
+          width: "100%", // Ensure footer spans the full width
+          marginTop: "20px",
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: "18px",
+            fontWeight: "bold",
+            color: "#2C2C2C",
+          }}
+        >
+          Total Price: {totalPrice.toFixed(2)} DA
+        </Typography>
+        <Button
+          className="buy-now-cart"
+          onClick={handleCheckOut}
+          sx={{
+            width: "200px", // Adjust button width for better alignment
+            height: "50px",
+            backgroundColor: "transparent",
+            border: "2px solid #023E8A",
+            color: "#023E8A",
+            borderRadius: "20px",
+            fontSize: "16px",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          Buy Now
+        </Button>
+      </Box>
+    </Box>
   );
 }

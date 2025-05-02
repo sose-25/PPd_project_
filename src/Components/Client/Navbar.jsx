@@ -1,59 +1,75 @@
-import React from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, Box, Container } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
+import React, { useContext } from 'react';
+import { List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, Box, Container } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
+import HistoryIcon from '@mui/icons-material/History';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { SelectedOptionContext } from '../../Context/SelectedOptionContext';
 
 const drawerWidth = 300;
 
-const Sidebar = () => {
+const Navbar = () => {
+  const { selectedOption, setSelectedOption } = useContext(SelectedOptionContext);
+  
+
+  const handleSelect = (option) => {
+    setSelectedOption(option);
+  };
+
   return (
     <>
-    <Container sx={{width:drawerWidth ,height:"100vh"}}>
-      <Toolbar>
-        <Typography variant="h6" noWrap>
-          User Profile
-        </Typography>
-      </Toolbar>
-      <Box sx={{ overflow: 'auto' }}>
-        <List>
-          <ListItem button component="a" href="/Homepage">
-            <ListItemIcon>
-              <HomeIcon />
-            </ListItemIcon>
-            <ListItemText primary="Home" />
-          </ListItem>
-          <ListItem button component="a" href="/Profile">
-            <ListItemIcon>
-              <AccountCircleIcon />
-            </ListItemIcon>
-            <ListItemText primary="Profile" />
-          </ListItem>
-          <ListItem button component="a" href="/Orders">
-            <ListItemIcon>
-              <ShoppingCartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Orders" />
-          </ListItem>
-          <ListItem button component="a" href="/Settings">
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-          </ListItem>
-          <ListItem button component="a" href="/Logout">
-            <ListItemIcon>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Logout" />
-          </ListItem>
-        </List>
-      </Box>
+      <Container sx={{ width: drawerWidth, height: "100vh" }}>
+        <Toolbar>
+          <Typography variant="h6" noWrap>
+            User Dashboard
+          </Typography>
+        </Toolbar>
+        <Box sx={{ overflow: 'auto' }}>
+          <List>
+            <ListItem
+              button
+              onClick={() => handleSelect("User Information")}
+              sx={{
+                backgroundColor: selectedOption === "User Information" ? "rgba(0, 0, 0, 0.1)" : "transparent",
+                "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.05)" },cursor:"pointer"
+              }}
+            >
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText sx={{ color: selectedOption === "User Information" ? "black" : "gray" }} primary="User Information" />
+            </ListItem>
+
+            <ListItem
+              button
+              onClick={() => handleSelect("Order History")}
+              sx={{
+                backgroundColor: selectedOption === "Order History" ? "rgba(0, 0, 0, 0.1)" : "transparent",
+                "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.05)" },cursor:"pointer"
+              }}
+            >
+              <ListItemIcon>
+                <HistoryIcon />
+              </ListItemIcon>
+              <ListItemText sx={{ color: selectedOption === "Order History" ? "black" : "gray" }} primary="Order History" />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => handleSelect("Wishlist")}
+              sx={{
+                backgroundColor: selectedOption === "Wishlist" ? "rgba(0, 0, 0, 0.1)" : "transparent",
+                "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.05)" },cursor:"pointer"
+              }}
+            >
+              <ListItemIcon>
+                <FavoriteIcon />
+              </ListItemIcon>
+              <ListItemText sx={{ color: selectedOption === "Wishlist" ? "black" : "gray" }} primary="Wishlist" />
+            </ListItem>
+          </List>
+        </Box>
       </Container>
-      </>
+    </>
   );
 };
 
-export default Sidebar;
+export default Navbar;
