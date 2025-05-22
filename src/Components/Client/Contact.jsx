@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, Container, CssBaseline } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Container,
+  CssBaseline,
+  Card,
+  CardContent,
+} from "@mui/material";
 import Header from "./Header";
 
 export default function Contact() {
@@ -23,67 +32,98 @@ export default function Contact() {
 
   return (
     <>
-    <CssBaseline />
-    <Header />
-    <Container sx={{ mt: 4 ,width:"40vw"}}>
-      <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>
-        Contact Us
-      </Typography>
+      <CssBaseline />
+      <Header />
       <Box
-        component="form"
-        onSubmit={handleSubmit}
         sx={{
-          maxWidth: "600px",
-          margin: "0 auto",
+          backgroundColor: "#f9f9f9",
+          minHeight: "100vh",
           display: "flex",
-          flexDirection: "column",
-          gap: 3,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 4,
         }}
       >
-        <TextField
-          label="Name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          variant="outlined"
-          fullWidth
-          required
-        />
-        <TextField
-          label="Email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          variant="outlined"
-          fullWidth
-          required
-        />
-        <TextField
-          label="Message"
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          variant="outlined"
-          fullWidth
-          multiline
-          rows={3}
-          required
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          sx={{
-            "&:hover": {
-              backgroundColor: "primary.dark",
-            },
-          }}
-        >
-          Submit
-        </Button>
+        <Container maxWidth="sm">
+          <Card
+            sx={{
+              boxShadow: 3,
+              borderRadius: 2,
+              overflow: "hidden",
+            }}
+          >
+            <CardContent>
+              <Typography
+                variant="h4"
+                textAlign="center"
+                sx={{ mb: 2, color: "#023E8A", fontWeight: "bold" }}
+              >
+                Contact Us
+              </Typography>
+              <Typography
+                variant="body1"
+                textAlign="center"
+                sx={{ mb: 4, color: "#6c757d" }}
+              >
+                Have questions or feedback? We'd love to hear from you!
+              </Typography>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 3,
+                }}
+              >
+                <TextField
+                  label="Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth
+                  required
+                />
+                <TextField
+                  label="Email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth
+                  required
+                />
+                <TextField
+                  label="Message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  required
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                     borderRadius: 7, mt: 2 ,
+                    "&:hover": {
+                      backgroundColor: "#023E8A",
+                    },
+                  }}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Container>
       </Box>
-    </Container>
     </>
   );
 }

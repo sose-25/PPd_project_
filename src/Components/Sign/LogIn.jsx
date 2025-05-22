@@ -32,15 +32,20 @@ export default function LogIn() {
       console.log("Login successful:", response);
       localStorage.setItem("token", response.token);
       if (response.role === 'seller') {
-        localStorage.setItem('user', response.data);
+        localStorage.setItem('seller_id', response.seller_details.id);
+        localStorage.setItem('seller_shopname', response.seller_details.shop_name);
+        localStorage.setItem('seller_name', response.username);
+        navigate("/SellerDashboard"); 
       } else if (response.role === 'client') {
         localStorage.setItem('user_id', response.id);
-      }
+        localStorage.setItem('user_name', response.username);
+        navigate("/HomePage"); 
+        }
       if (!response.token) {
         throw new Error("Authentication failed: Token not provided");
       }
   
-      navigate("/HomePage"); // Redirect to the homepage
+     
     } catch (err) {
       console.error("Error during sign-in:", err);
       setError(err.response?.data?.error || "Login failed");

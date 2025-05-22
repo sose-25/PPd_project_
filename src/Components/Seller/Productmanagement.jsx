@@ -30,9 +30,9 @@ import { getProducts } from "../../../APIs/productsservice";
 export default function ProductManagement() {
   const [openDialog, setOpenDialog] = useState(false);
   const [products, setProducts] = useState([]);
-  const sellerid = localStorage.getItem('user_id');
+  const sellerid = localStorage.getItem('seller_id');
   const [currentProduct, setCurrentProduct] = useState({
-    seller: 12, // Seller ID
+    seller: sellerid, // Seller ID
     product_id: null, // Product ID
     product: 0, // Product name
     quantity: 0, // Stock quantity
@@ -44,20 +44,25 @@ export default function ProductManagement() {
       try {
         const response = await getProducts(); // Fetch data from the API
         if (response && Array.isArray(response.products)) {
-          // Flatten the products with seller-specific details
+          const sellerId = localStorage.getItem('seller_id'); // Get the signed-in seller's ID
+  
+          // Filter products for the signed-in seller
           const processedProducts = response.products.flatMap((product) =>
-            product.available_sellers.map((proseller) => ({
-              proseller_id: proseller.id,
-              product_name: product.product_name,
-              category: product.category,
-              image_url: product.image_url,
-              seller_id: proseller.seller.id,
-              price: proseller.price,
-              condition: proseller.condition_display,
-              quantity: proseller.quantity,
-            }))
+            product.available_sellers
+              .filter((proseller) => proseller.seller.id === parseInt(sellerId)) // Match seller ID
+              .map((proseller) => ({
+                proseller_id: proseller.id,
+                product_name: product.product_name,
+                category: product.category,
+                image_url: product.image_url,
+                seller_id: proseller.seller.id,
+                price: proseller.price,
+                condition: proseller.condition_display,
+                quantity: proseller.quantity,
+              }))
           );
-          setProducts(processedProducts); // Update the state with processed products
+  
+          setProducts(processedProducts); // Update the state with filtered products
         } else {
           console.error("Unexpected response format:", response);
           alert("Failed to load products. Please try again later.");
@@ -70,10 +75,25 @@ export default function ProductManagement() {
   
     fetchProducts();
   }, []);
+  const [allProducts, setAllProducts] = useState([]);
+
+useEffect(() => {
+  const fetchAllProducts = async () => {
+    try {
+      const response = await getProducts(); // Use your API to get all products
+      if (response && Array.isArray(response.products)) {
+        setAllProducts(response.products);
+      }
+    } catch (error) {
+      console.error("Failed to fetch all products:", error);
+    }
+  };
+  fetchAllProducts();
+}, []);
   const handleDialogOpen = (product = { 
     product_id: currentProduct.product_id,
     product: currentProduct.product,
-    seller: 12,
+    seller: sellerid,
     quantity: currentProduct.quantity,
     price: currentProduct.price,
     condition: currentProduct.condition,
@@ -87,7 +107,7 @@ const handleDialogClose = () => {
   setCurrentProduct({
     product_id: null,
     product: 1,
-    seller: 12,
+    seller: sellerid,
     quantity: 0,
     price: 0,
     condition: "new",
@@ -162,17 +182,10 @@ const handleSaveProduct = async () => {
     <TableRow key={product.proseller_id}>
       <TableCell>{product.product_name}</TableCell>
       <TableCell>{product.quantity}</TableCell>
-      <TableCell>${product.price}</TableCell>
+      <TableCell>{product.price} DA</TableCell>
       <TableCell>{product.condition}</TableCell>
+      
       <TableCell>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => handleDialogOpen(product)}
-          sx={{ mr: 1 }}
-        >
-          Edit
-        </Button>
         <Button
           variant="outlined"
           color="error"
@@ -190,14 +203,21 @@ const handleSaveProduct = async () => {
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>{currentProduct.id ? "Edit Product" : "Add Product"}</DialogTitle>
         <DialogContent>
-        <TextField
-  label="Product Name"
-  name="product"
-  value={currentProduct.product}
-  onChange={handleInputChange}
-  fullWidth
-  sx={{ mb: 2 }}
-/>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+  <InputLabel>Product</InputLabel>
+  <Select
+    name="product"
+    value={currentProduct.product}
+    onChange={handleInputChange}
+    label="Product"
+  >
+    {allProducts.map((prod) => (
+      <MenuItem key={prod.id} value={prod.id}>
+        {prod.product_name}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
 <TextField
   label="Stock"
   name="quantity"

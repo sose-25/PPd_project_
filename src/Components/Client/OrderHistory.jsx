@@ -7,19 +7,19 @@ const OrderHistory = () => {
     {
       id: 1,
       date: '2025-03-15',
-      total: '$120.00',
+      total: '10000.00 DA',
       status: 'Delivered',
     },
     {
       id: 2,
       date: '2025-03-10',
-      total: '$75.50',
+      total: '7550.50 DA',
       status: 'Processing',
     },
     {
       id: 3,
       date: '2025-03-05',
-      total: '$45.00',
+      total: '4500.00 DA',
       status: 'Cancelled',
     },
   ]);

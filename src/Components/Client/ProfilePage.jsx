@@ -37,7 +37,7 @@ const ProfilePage = () => {
         return <ProfileInfoPage />;
     }
   };
-
+  const username = localStorage.getItem('user_name');
   return (
     <div>
       <CssBaseline />
@@ -58,7 +58,7 @@ const ProfilePage = () => {
                 justifyContent: "space-between",
               }}
             >
-              <h3 style={{ margin: 0 }}>Client Name</h3>
+              <h3 style={{ margin: 0}}>{username}</h3>
             </Box>
             <Box sx={{pt:1,pl:2 }}>
                <FacebookIcon/>

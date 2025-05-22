@@ -8,7 +8,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 import { useNavigate } from 'react-router-dom';
 import { searchProducts } from '../../../APIs/SearchService';
-
+import Untitled from '../../assets/Untitled-1-03.png';
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
@@ -39,9 +39,11 @@ const Header = ({HandleClickBasketIcon}) => {
     <AppBar sx={{backgroundColor:"#023E8A"}} position="static">
       <Toolbar>
         {/* Logo on the left */}
-        <Typography variant="h6" component="div">
-          D9
-        </Typography>
+        <img
+      src={Untitled} 
+      alt="Logo"
+      style={{ height: 40, marginRight: 8 }}
+    />
 
         {/* Navigation links on the left */}
         <Box sx={{ display: 'flex', gap: 2, marginLeft: 2 }}>

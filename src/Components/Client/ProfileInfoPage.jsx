@@ -16,6 +16,7 @@ export default function ProfileInfoPage(){
       const handleBoxClick = (e) => {
         e.stopPropagation();
       };
+      const username = localStorage.getItem('user_name');
     return(
         <Container>
               
@@ -32,16 +33,16 @@ export default function ProfileInfoPage(){
                         </IconButton>
                       </Box>
                       <Typography variant="body1">
-                        <strong>Full Name:</strong> User Name
+                        <strong>Full Name:</strong> {username}
                       </Typography>
                       <Typography variant="body1">
-                        <strong>Email:</strong> user@example.com
+                        <strong>Email:</strong> {username}@example.com
                       </Typography>
                       <Typography variant="body1">
-                        <strong>Phone:</strong> (123) 456-7890
+                        <strong>Phone:</strong> (+213) 000000000
                       </Typography>
                       <Typography variant="body1">
-                        <strong>Address:</strong> 123 Main St, Anytown, USA
+                        <strong>Address:</strong> Klaliz, Ras el oued, Algeria
                       </Typography>
                     </Paper>
                   </Container>

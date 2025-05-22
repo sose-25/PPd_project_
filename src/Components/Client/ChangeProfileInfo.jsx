@@ -3,10 +3,10 @@ import { Container, TextField, Button, Box, Typography, Paper } from '@mui/mater
 
 export default function ChangeProfileInfo() {
   const [profileInfo, setProfileInfo] = useState({
-    fullName: 'User Name',
-    email: 'user@example.com',
-    phone: '(123) 456-7890',
-    address: '123 Main St, Anytown, USA',
+    fullName: '',
+    email: '',
+    phone: '',
+    address: '',
   });
 
   const handleChange = (e) => {

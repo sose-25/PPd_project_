@@ -16,7 +16,7 @@ const Hero = () => {
       }}
     >
       <div className="hero mb-5 py-5">
-        <h1 style={{ fontSize: '4rem', color: '#023E8A', margin: 0 }}>Pièca</h1>
+        <h1 style={{ fontSize: '4rem', color: '#023E8A', margin: 0 }}>Piesti</h1>
         <p style={{ fontSize: '1.5rem', margin: '0.5rem 0' }}>We Offer a Wide Range Of</p>
         <p style={{ fontSize: '1.5rem', margin: 0 }}>
           High-Quality Spare Parts For All Car Models

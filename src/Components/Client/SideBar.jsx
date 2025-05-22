@@ -21,17 +21,17 @@ export default function ProductsSideBar({ categories, selectedCategory, onCatego
         {categories.map((category) => (
           <ListItem
             button
-            key={category}
-            onClick={() => onCategorySelect(category)}
+            key={category.id}
+            onClick={() => onCategorySelect(category.id)}
             sx={{
-              backgroundColor: selectedCategory === category ? "white" : "transparent",
+              backgroundColor: selectedCategory === category.id ? "white" : "transparent",
               "&:hover": { backgroundColor: "#F0F0F0",color: "#0077B6"  },
               cursor: "pointer"
             }}
           >
             <ListItemText
-              primary={category}
-              sx={{ color: selectedCategory === category ? "#0077B6" : "White","&:hover": {color: "#0077B6"  } }}
+              primary={category.name}
+              sx={{ color: selectedCategory === category.id ? "#0077B6" : "White","&:hover": {color: "#0077B6"  } }}
             />
           </ListItem>
         ))}

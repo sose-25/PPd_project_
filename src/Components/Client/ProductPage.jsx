@@ -229,7 +229,7 @@ export default function ProductPage() {
             >
               {product.product_name}
               <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
-                {sellerDetails.price || "N/A"}$
+                {sellerDetails.price || "N/A"} DA
               </Typography>
             </Typography>
             <Typography sx={{ fontSize: 15, mb: 2, color: "green" }}>
@@ -319,7 +319,7 @@ export default function ProductPage() {
                     borderRadius: 2,
                   }}
                 >
-                  <Typography variant="body2">{proseller_id}</Typography>
+                  <Typography variant="body2">There is no details for now !</Typography>
                 </Box>
               )}
             </Box>

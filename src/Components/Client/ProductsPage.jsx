@@ -16,6 +16,7 @@ import ProductsSideBar from "./SideBar";
 import TuneIcon from "@mui/icons-material/Tune";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { getProducts } from "../../../APIs/productsservice";
+import Basket from "./Basket";
 
 export default function ProductsPage() {
   const navigate = useNavigate();
@@ -24,9 +25,17 @@ export default function ProductsPage() {
   const searchQuery = queryParams.get("q"); 
 
   const [products, setProducts] = useState([]);
+  const [isBasketVisible, setIsBasketVisible] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState(0);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const handleBasketVisible = () => {
+    setIsBasketVisible(!isBasketVisible);
+  };
+
+  const handleOverlayClick = () => {
+    setIsBasketVisible(false);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -84,23 +93,33 @@ export default function ProductsPage() {
     navigate(`/Product/${prosellerId}/`); 
   };
 
-  const categories = ["All", "Engine", "Chassis", "Body", "Electronic System", "Interior"];
+  const categories = [{id:0,name:"All"},{id:1,name:"Body"},{id:2,name:"Braking System"},{id:3,name:"Steering System"},{id:4,name:"Electronic System"},{id:5,name:"Fuel & Exhaust System"},{id:6,name:"Interior"},{id:7,name:"Drivetrain"}];
 
   const filteredByCategory =
-    selectedCategory === "All"
+    selectedCategory === 0
       ? filteredProducts
       : filteredProducts.filter((product) => product.category === selectedCategory);
 
   return (
     <>
       <CssBaseline />
-      <Header />
-      <Box sx={{ display: "flex", height: "100vh" }}>
-        <ProductsSideBar
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategorySelect={setSelectedCategory}
-        />
+      <Header HandleClickBasketIcon={handleBasketVisible}/>
+      <Box sx={{ display: "flex" }}>
+        <Box
+    sx={{
+      position: "sticky",
+      top: 0,
+      alignSelf: "flex-start",
+      height: "fit-content",
+      zIndex: 100,
+    }}
+  >
+    <ProductsSideBar
+      categories={categories}
+      selectedCategory={selectedCategory}
+      onCategorySelect={setSelectedCategory}
+    />
+  </Box>
         <Container sx={{ mt: 4, flexGrow: 1 }}>
           <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
             <Typography variant="h4" gutterBottom>
@@ -257,37 +276,38 @@ export default function ProductsPage() {
           </Grid>
         </Container>
       </Box>
-      {isFilterVisible && (
-        <>
-          <Box
-            sx={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              zIndex: 999,
-            }}
-            onClick={toggleFilterVisibility}
-          />
-          <Box
-            sx={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 1000,
-              backgroundColor: "white",
-              padding: 2,
-              boxShadow: 3,
-              borderRadius: 1,
-            }}
-          >
-            <ProductsFiltering />
-          </Box>
-        </>
-      )}
+    
+      {isBasketVisible && (
+              <>
+                <Box
+                  sx={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    zIndex: 999,
+                  }}
+                  onClick={handleOverlayClick}
+                />
+                <Box
+                  sx={{
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 1000,
+                    backgroundColor: "white",
+                    padding: 2,
+                    boxShadow: 3,
+                    borderRadius: 1,
+                  }}
+                >
+                  <Basket />
+                </Box>
+              </>
+            )}
     </>
   );
 }

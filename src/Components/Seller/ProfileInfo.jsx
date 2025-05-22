@@ -4,6 +4,7 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import TelegramIcon from '@mui/icons-material/Telegram';
 
 export default function ProfileInformation(){
+  const sellername = localStorage.getItem('seller_name');
     return(
         <Container>
             <Box sx={{display:"flex"}}>
@@ -18,7 +19,7 @@ export default function ProfileInformation(){
                 justifyContent: "space-between",
               }}
             >
-              <h3 style={{ margin: 0 }}>Seller Name</h3>
+              <h3 style={{ margin: 0 }}>{sellername}</h3>
               <Link>Edit</Link>
             </Box>
             <Box sx={{pt:1}}>

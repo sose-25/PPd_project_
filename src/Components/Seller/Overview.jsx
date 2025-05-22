@@ -16,7 +16,7 @@ export default function Overview() {
     },}}>
             <Typography variant="h6">Daily Revenue</Typography>
             <Typography variant="h4" color="primary">
-              $1,200
+              1,200 DA
             </Typography>
           </Paper>
         </Grid>
@@ -28,7 +28,7 @@ export default function Overview() {
     },}}>
             <Typography variant="h6">Weekly Revenue</Typography>
             <Typography variant="h4" color="primary">
-              $8,400
+              8,400 DA
             </Typography>
           </Paper>
         </Grid>
@@ -40,7 +40,7 @@ export default function Overview() {
     },}}>
             <Typography variant="h6">Monthly Revenue</Typography>
             <Typography variant="h4" color="primary">
-              $36,000
+              36,000 DA
             </Typography>
           </Paper>
         </Grid>

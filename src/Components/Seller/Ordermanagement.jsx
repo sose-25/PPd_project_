@@ -21,8 +21,8 @@ import {
 
 export default function OrderManagement() {
   const [orders, setOrders] = useState([
-    { id: 1, customer: "John Doe", status: "Pending", total: 120 },
-    { id: 2, customer: "Jane Smith", status: "Shipped", total: 200 },
+    { id: 1, customer: "Zaki ", status: "Pending", total: 1200 },
+    { id: 2, customer: "Khalid", status: "Shipped", total: 20000 },
   ]);
 
 
@@ -64,7 +64,7 @@ export default function OrderManagement() {
                     <MenuItem value="Completed">Completed</MenuItem>
                   </Select>
                 </TableCell>
-                <TableCell>${order.total}</TableCell>
+                <TableCell>{order.total} DA</TableCell>
                  <Button
           variant="outlined"
           color="success"
