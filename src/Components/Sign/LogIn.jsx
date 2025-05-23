@@ -23,6 +23,14 @@ export default function LogIn() {
       setError("Both username and password are required");
       return;
     }
+    if(signInData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+    if(signInData.username.length < 3) {
+      setError("Username must be at least 3 characters long");
+      return;
+    }
   
     setError("");
     setLoading(true);
